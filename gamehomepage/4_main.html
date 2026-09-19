@@ -1,0 +1,793 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Untree.co">
+    <link rel="shortcut icon" href="LOGO.png">
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="fonts/icomoon/style.css">
+    <link rel="stylesheet" href="fonts/flaticon/font/flaticon.css">
+
+    <link rel="stylesheet" href="css/tiny-slider.css">
+    <link rel="stylesheet" href="css/aos.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="chatbot.css">
+    <link rel="stylesheet" href="#styles.css">
+<style>
+    /*
+        이 스타일들은 외부 css/style.css 파일로 옮기는 것이 가장 좋습니다.
+        여기서는 HTML 파일 내의 기존 inline 스타일을 수정하는 데 중점을 둡니다.
+    */
+
+    /* 사용자 이름과 드롭다운을 포함하는 LI 요소(#user-name-menu-container)에 대한 스타일 */
+    #user-name-menu-container.has-children { /* HTML에서 이 li에 'has-children' 클래스를 추가했다고 가정합니다. */
+        position: relative; /* 드롭다운 메뉴의 기준점이 됩니다. */
+        /* display: none; 이 스타일은 JavaScript에서 로그인 상태에 따라 제어합니다. (예: style.display = 'list-item';) */
+        /* float: right; 와 margin-top 등은 Flexbox 레이아웃에서는 더 이상 필요 없거나 css/style.css에서 제어됩니다. */
+    }
+
+    /* 로그아웃 드롭다운 메뉴(#logout-dropdown) 자체에 대한 스타일 */
+    #logout-dropdown.dropdown {
+        display: none; /* 기본적으로는 숨겨져 있어야 합니다. 마우스 호버 시 보이도록 합니다. */
+        position: absolute;
+        top: 100%; /* 부모 요소(#user-name-menu-container) 바로 아래에 위치합니다. */
+        right: 0;  /* 부모 요소의 오른쪽에 맞춰 정렬됩니다. */
+        background-color: white;
+        list-style: none;
+        padding: 5px 0; /* 상하 패딩은 약간, 좌우 패딩은 0 (li > a 에서 처리) */
+        margin: 0;
+        margin-top: 5px; /* 부모 메뉴와의 약간의 간격 (외부 CSS와 일관성 유지) */
+        border: 1px solid #ddd;
+        z-index: 1000; /* 다른 요소들보다 위에 표시됩니다. */
+        min-width: 160px; /* 드롭다운의 최소 너비 */
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* 외부 CSS의 드롭다운과 유사한 그림자 */
+    }
+
+    /* 로그아웃 드롭다운 내부의 각 항목(li) - 특별한 스타일이 필요 없을 수 있음 */
+    #logout-dropdown li {
+        /* 외부 CSS의 .dropdown > li 스타일이 적용될 수 있습니다. */
+    }
+
+    /* 로그아웃 드롭다운 내부의 링크(a) 스타일 */
+    #logout-dropdown li a {
+        display: block; /* 링크 영역 전체를 클릭 가능하게 합니다. */
+        padding: 8px 15px; /* 내부 패딩 */
+        text-decoration: none;
+        color: #333333; /* 외부 CSS와 일관된 텍스트 색상 */
+        white-space: nowrap; /* 텍스트가 한 줄로 표시되도록 합니다. */
+    }
+
+    #logout-dropdown li a:hover {
+        background-color: #f8f9fa; /* 외부 CSS와 일관된 호버 배경색 */
+        color: #007bff; /* 외부 CSS와 일관된 호버 텍스트 색상 */
+    }
+
+    /* 중요: 사용자 이름(li#user-name-menu-container)에 마우스를 올렸을 때 드롭다운 메뉴를 보이게 함 */
+    /* HTML의 li#user-name-menu-container 에 'has-children' 클래스가 있어야 이 규칙이 잘 적용됩니다. */
+    #user-name-menu-container.has-children:hover > #logout-dropdown.dropdown {
+        display: block;
+        /* 외부 CSS에서 visibility/opacity 전환 효과를 사용한다면 아래처럼 변경 가능: */
+        /* visibility: visible; */
+        /* opacity: 1; */
+    }
+
+    /* 사용자 이름 링크(a#user-name) 자체에 대한 스타일 (필요한 경우) */
+    #user-name-menu-container.has-children > a#user-name.menu-link {
+        /* padding, color 등은 이미 외부 CSS의 .menu-link 또는 #user-name-menu-container a#user-name 등으로 정의되어 있을 수 있습니다. */
+        /* 만약 a#user-name 내부에 아이콘과 텍스트를 정렬해야 한다면 display: flex; align-items: center; 를 사용할 수 있습니다. */
+        /* display: flex; */
+        /* align-items: center; */
+    }
+    body {
+  font-family: 'Work Sans', Arial, sans-serif;
+  background: #fff;
+  color: #222;
+}
+
+/* 게시판 제목 스타일 */
+.section-title, .board-table-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #222f3e;
+  /* border-bottom: 2px solid #222; 삭제! */
+  padding-bottom: 6px;
+  letter-spacing: 0.3px;
+}
+
+/* 테이블 래퍼 (좌/우 칼럼 구분) */
+.board-table-wrap {
+  margin-bottom: 36px;
+}
+
+/* 실제 게시글 표(table 비슷한 구조) */
+.board-table {
+  border-top: 1.5px solid #222;
+  background: #fff;
+}
+
+/* 게시글 한 줄 */
+.board-row, .board-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 10px 13px 0;
+  border-bottom: 1px solid #ececec;
+  font-size: 16px;
+  transition: background 0.14s;
+  background: #fff;
+}
+.board-row:last-child, .board-list li:last-child {
+  border-bottom: none;
+}
+
+/* 게시글 제목 */
+.board-title, .board-list li a {
+  color: #222;
+  font-weight: 400;
+  text-decoration: none;
+  flex: 1 1 auto;
+  padding-right: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.17s;
+  max-width: 320px;
+  display: block;
+}
+.board-title a,
+.board-list li a {
+  color: inherit;
+  text-decoration: none;
+}
+.board-title a:hover,
+.board-list li a:hover {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+/* 게시글 날짜/작성자 */
+.board-date, .board-list li span {
+  color: #888;
+  font-size: 14px;
+  white-space: nowrap;
+  min-width: 110px;
+  text-align: right;
+  margin-left: 16px;
+  flex-shrink: 0;
+}
+
+/* 게시글 리스트 (ul) - 리스트 위 border 제거, 아래쪽에만 선 */
+.board-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-top: 1.5px solid #222;
+  background: #fff;
+  position: relative;
+}
+
+/* 게시글 리스트 아래에만 진한 선 추가 */
+.board-list::after {
+  content: "";
+  display: block;
+  border-bottom: 2px solid #222;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+/* 반응형 */
+@media (max-width: 700px) {
+  .board-table-title, .section-title { font-size: 17px; }
+  .board-row, .board-list li { font-size: 13.5px; padding: 9px 5px 9px 0; }
+  .board-title, .board-list li a { max-width: 150px; }
+}
+
+/* ======= HERO EVENT SLIDER (메인 히어로 오버레이) ======= */
+.hero { position: relative; min-height: 78vh; }
+.hero-event-wrap{
+position: absolute;                 /* ★ 히어로 하단 고정 */
+left: 50%;
+transform: translateX(-50%);
+bottom: clamp(12px, 3vh, 32px);     /* 안전한 하단 여백 */
+max-width: 1100px;
+width: min(1100px, 92vw);
+padding: 0 16px;
+z-index: 5;
+}
+.hero-event-slider{
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 18px 40px rgba(0,0,0,.35);
+}
+.hero-event-slide{
+  position: relative;
+  width:100%;
+  height: 56vh;             /* 배너 세로 */
+  min-height: 420px;
+}
+.hero-event-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-size: 100% 100%;        /* ✅ 비율 무시하고 좌우로 꽉 채움 */
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  transition: transform 0.4s ease;
+}
+.hero-event-badge{
+  position:absolute; left:14px; top:14px;
+  background:#6d28d9; color:#fff; font-weight:800; font-size:12px;
+  padding:6px 10px; border-radius:999px;
+}
+
+/* 하단 바 (제목 탭 + 페이저) */
+.hero-event-bar{
+  position:absolute; 
+  left:50%; 
+  bottom:16px;
+  transform:translateX(-50%);
+  width: calc(100% - 32px);
+  background: linear-gradient(0deg,rgba(12,14,22,.75),rgba(12,14,22,.45));
+  backdrop-filter: blur(6px);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius: 12px;
+  padding: 8px 14px 6px 14px;
+  display:flex; align-items:center; gap:12px; justify-content:space-between;
+}
+.hero-event-titles{
+  display:flex; gap:16px; overflow:auto; white-space:nowrap; scrollbar-width:none;
+}
+.hero-event-titles::-webkit-scrollbar{ display:none; }
+.hero-event-titles button{
+  background:transparent; border:0; color:#e5e7eb; opacity:.75;
+  font-weight:700; padding:6px 2px; cursor:pointer;
+}
+.hero-event-titles button.active{ opacity:1; border-bottom:2px solid #a78bfa; }
+.hero-event-pager{ display:flex; align-items:center; gap:8px; color:#e5e7eb; }
+.hero-nav{
+  width:32px; 
+  height:32px; 
+  line-height: 28px;
+  border-radius:999px; 
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(30,35,52,.45); 
+  color:#fff; 
+  text-align:center;
+}
+.hero-count b{ font-weight:900; }
+
+/* 반응형 */
+@media (max-width: 992px){
+  .hero-event-slide{ height: 42vh; min-height: 300px; }
+  .hero-event-wrap{ padding-top: 84px; }
+}
+
+
+
+</style>
+        
+        
+
+    <title>WEBGAME</title> <!--이 부분은 팀명으로 나중에 변경해야 함-->
+</head>
+<script src="event_config.js"></script>
+   <script>
+    // 닉네임 저장 함수
+    function saveNewNickname() {
+        const newNicknameInput = document.getElementById('nicknameInput');
+        if (!newNicknameInput) return; // nicknameInput이 없는 페이지일 수 있음
+
+        const newNickname = newNicknameInput.value.trim();
+        if (newNickname.length < 2) {
+            alert('닉네임은 2자 이상 입력해야 합니다.');
+            return;
+        }
+        localStorage.setItem('myNickname', newNickname);
+
+        const userNameElement = document.getElementById('user-name');
+        if (userNameElement) {
+            userNameElement.textContent = newNickname;
+        }
+
+        const nicknameEditBox = document.getElementById('nicknameEditBox');
+        if (nicknameEditBox) {
+            nicknameEditBox.style.display = 'none';
+        }
+        alert('닉네임이 변경되었습니다!');
+    }
+
+    // 네비게이션 바 및 푸터의 동적 콘텐츠 초기화 함수
+    function initializePageElements() {
+        // --- 네비게이션 바 로그인 상태 및 이벤트 리스너 초기화 ---
+        const kakaoNickname = localStorage.getItem('kakaoNickname');
+        const myNickname = localStorage.getItem('myNickname') || kakaoNickname;
+
+        const isGuest = localStorage.getItem('isGuest') === 'true';
+
+        const loginMenu = document.getElementById('login-menu');
+        const userNameMenuContainer = document.getElementById('user-name-menu-container');
+        const userNameElement = document.getElementById('user-name');
+        const userInfoButton = document.getElementById('user-info');
+        const logoutButton = document.getElementById('logout');
+        const nicknameEditBox = document.getElementById('nicknameEditBox');
+        const nicknameInput = document.getElementById('nicknameInput');
+
+if (kakaoNickname) {
+            if (loginMenu) loginMenu.style.display = 'none';
+            if (userNameMenuContainer) userNameMenuContainer.style.display = 'list-item';
+            if (userNameElement) userNameElement.textContent = myNickname || kakaoNickname;
+
+            // ▼▼▼ [수정] 게스트/일반 유저 분기 처리 ▼▼▼
+            if (isGuest) {
+                // 게스트일 경우: '내 정보' 버튼 숨기기
+                if (userInfoButton) {
+                    userInfoButton.style.display = 'none'; 
+                }
+
+                // 게스트일 경우: 로그아웃 로직 변경
+                if (logoutButton) {
+                    logoutButton.addEventListener('click', function () {
+                        // 게스트는 localStorage만 비우고 새로고침
+                        localStorage.removeItem('kakaoNickname');
+                        localStorage.removeItem('myNickname');
+                        localStorage.removeItem('userId');
+                        localStorage.removeItem('isGuest');
+                        location.reload();
+                    });
+                }
+            } else {
+                // (기존 로직) 실제 카카오 유저일 경우
+                if (userInfoButton) {
+                    userInfoButton.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        if (nicknameEditBox) nicknameEditBox.style.display = 'block';
+                        if (nicknameInput) nicknameInput.value = myNickname || '';
+                    });
+                }
+
+                if (logoutButton) {
+                    logoutButton.addEventListener('click', function () {
+                        localStorage.removeItem('kakaoNickname');
+                        localStorage.removeItem('myNickname');
+                        localStorage.removeItem('userId'); // userId도 삭제
+                        localStorage.removeItem('isGuest'); // isGuest도 삭제
+                        
+                        // (기존) 카카오 로그아웃
+                        if (typeof Kakao !== 'undefined' && Kakao.Auth && Kakao.Auth.logout) {
+                            Kakao.Auth.logout(function () {
+                                location.reload();
+                            });
+                        } else {
+                            console.warn('Kakao SDK not fully loaded or logout function unavailable. Reloading page.');
+                            location.reload();
+                        }
+                    });
+                }
+            }
+            // ▲▲▲ [수정] 게스트/일반 유저 분기 처리 ▲▲▲
+
+        } else {
+            if (loginMenu) loginMenu.style.display = 'list-item';
+            if (userNameMenuContainer) userNameMenuContainer.style.display = 'none';
+        }
+
+        // --- 네비게이션 바 드롭다운/모바일 메뉴 JS 초기화 (템플릿에 따라) ---
+        if (typeof siteMenuClone === 'function') {
+            siteMenuClone();
+        } else if (window.UntreeCollab && typeof window.UntreeCollab.siteMenuClone === 'function') {
+            window.UntreeCollab.siteMenuClone();
+        }
+
+        // --- 푸터 현재 연도 설정 ---
+        const currentYearSpan = document.getElementById('current-year');
+        if (currentYearSpan) {
+            currentYearSpan.textContent = new Date().getFullYear();
+        }
+
+        // --- AOS 등 기타 라이브러리 재초기화 (필요한 경우) ---
+        if (typeof AOS !== 'undefined') {
+            AOS.refreshHard();
+        }
+    }
+
+    // 페이지 로드 시 nav.html 및 footer.html을 비동기적으로 불러오고, 모두 완료되면 초기화 함수 호출
+    document.addEventListener("DOMContentLoaded", function() {
+        const navPromise = fetch("nav.html")
+            .then(response => {
+                if (!response.ok) throw new Error("Network response was not ok for nav.html: " + response.statusText);
+                return response.text();
+            })
+            .then(data => {
+                const navPlaceholder = document.getElementById("navbar-placeholder");
+                if (navPlaceholder) {
+                    navPlaceholder.innerHTML = data;
+                } else {
+                    console.error("Error: Navbar placeholder element (#navbar-placeholder) not found.");
+                }
+            });
+
+        const footerPromise = fetch("footer.html")
+            .then(response => {
+                if (!response.ok) throw new Error("Network response was not ok for footer.html: " + response.statusText);
+                return response.text();
+            })
+            .then(data => {
+                const footerPlaceholder = document.getElementById("footer-placeholder");
+                if (footerPlaceholder) {
+                    footerPlaceholder.innerHTML = data;
+                } else {
+                    console.error("Error: Footer placeholder element (#footer-placeholder) not found.");
+                }
+            });
+
+        // 네비게이션 바와 푸터 HTML이 모두 로드된 후 초기화 함수 실행
+        Promise.all([navPromise, footerPromise])
+            .then(() => {
+                initializePageElements(); // 네비게이션 바 및 푸터 관련 기능 초기화
+            })
+            .catch(error => console.error('Error loading common page elements (navbar/footer):', error));
+    });
+</script>
+<body>
+    <div id="navbar-placeholder"></div>
+
+    <div class="hero">
+        <div class="hero-slide">
+            <div class="img overlay" style="background-image: url('images/game_1.jpg')"></div>
+            <div class="img overlay" style="background-image: url('images/game_2.jpg')"></div>
+            <div class="img overlay" style="background-image: url('images/header.jpg')"></div>
+        </div>
+        <!-- === HERO EVENT SLIDER (배경 위 오버레이) === -->
+<div class="hero-event-wrap">
+  <!-- 슬라이드 본체(이미지/배지) -->
+  <div id="heroEventSlider" class="hero-event-slider">
+    <!-- JS가 여기 안에 슬라이드들을 주입합니다 -->
+  </div>
+
+  <!-- 하단 탭/제목/페이저 바 -->
+  <div class="hero-event-bar">
+    <div id="heroEventTitles" class="hero-event-titles" aria-label="이벤트 목록"></div>
+    <div class="hero-event-pager">
+      <button id="heroPrev" class="hero-nav prev" aria-label="이전">‹</button>
+      <span class="hero-count"><b id="heroCur">1</b>/<span id="heroTotal">1</span></span>
+      <button id="heroNext" class="hero-nav next" aria-label="다음">›</button>
+    </div>
+  </div>
+</div>
+<!-- === /HERO EVENT SLIDER === -->
+
+    </div>
+
+    <!-- 닉네임 변경 UI -->
+    <div id="nicknameEditBox" style="display:none; position:fixed; top:20%; left:50%; transform:translateX(-50%); background:white; padding:20px; border:1px solid #ccc; z-index:2000;">
+        <h4>닉네임 변경</h4>
+        <input type="text" id="nicknameInput" placeholder="새 닉네임 입력" style="margin-bottom: 10px; width: 100%;">
+        <br>
+        <button onclick="saveNewNickname()">저장</button>
+        <button onclick="document.getElementById('nicknameEditBox').style.display='none'">취소</button>
+    </div>
+
+
+    <div class="section">
+  <div class="container">
+    <div class="row">
+      <!-- 자유게시판 -->
+      <div class="col-md-6">
+        <h3 class="section-title">자유게시판</h3>
+        <ul class="board-list" id="free-popular-list">
+          <!-- JavaScript로 게시글이 삽입됨 -->
+        </ul>
+         <div class="board-bottom-line"></div>
+      </div>
+
+      <!-- 공략게시판 -->
+      <div class="col-md-6">
+        <h3 class="section-title">공략게시판</h3>
+        <ul class="board-list" id="target-popular-list">
+          <!-- JavaScript로 게시글이 삽입됨 -->
+        </ul>
+         <div class="board-bottom-line"></div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+    
+    
+    
+
+    <div class="section sec-testimonials">
+        <div class="container">
+            <div class="row mb-5 align-items-center">
+                <div class="col-md-6">
+                    <h2 class="font-weight-bold heading text-primary mb-4 mb-md-0">개발자</h2>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div id="testimonial-nav">
+                        <span class="prev" data-controls="prev">Prev</span>
+                        <span class="next" data-controls="next">Next</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4"></div>
+            </div>
+            <div class="testimonial-slider-wrap">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="testimonial">
+                            <img src="images/배너.jpg" alt="Image" class="img-fluid rounded-circle w-25 mb-4">
+                            <div class="rate">
+                                <span class="icon-star text-warning"></span>
+                                <span class="icon-star text-warning"></span>
+                                <span class="icon-star text-warning"></span>
+                                <span class="icon-star text-warning"></span>
+                                <span class="icon-star text-warning"></span>
+                            </div>
+                            <h3 class="h5 text-primary mb-4">김승혁</h3>
+                            <blockquote>
+                                <p>&ldquo;안녕하세요! 이 홈페이지의 개발자 중 한 명인 김승혁입니다."</p>
+                            </blockquote>
+                            <p class="text-black-50">한경대학교 4학년</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="testimonial">
+                            <img src="images/DoorBell.jpg" alt="Image" class="img-fluid rounded-circle w-25 mb-4">
+                            <div class="rate">
+                                <span class="icon-star text-warning"></span>
+                                <span class="icon-star text-warning"></span>
+                                <span class="icon-star text-warning"></span>
+                                <span class="icon-star text-warning"></span>
+                                <span class="icon-star text-warning"></span>
+                            </div>
+                            <h3 class="h5 text-primary mb-4">DoorBell</h3>
+                            <blockquote>
+                                <p>&ldquo;안녕하세요! 이 홈페이지의 개발자 중 한 명인 DoorBell입니다. 저희 사이트를 많이 이용해 주세요"</p>
+                            </blockquote>
+                            <p class="text-black-50">한경대학교 4학년</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="testimonial">
+                            <img src="images/캐릭터.jpg" alt="Image" class="img-fluid rounded-circle w-25 mb-4">
+                            <div class="rate">
+                                <span class="icon-star text-warning"></span>
+                                <span class="icon-star text-warning"></span>
+                                <span class="icon-star text-warning"></span>
+                                <span class="icon-star text-warning"></span>
+                                <span class="icon-star text-warning"></span>
+                            </div>
+                            <h3 class="h5 text-primary mb-4">채희석</h3>
+                            <blockquote>
+                                <p>&ldquo;안녕하세요! 이 홈페이지의 개발자 중 한 명인 채희석입니다."</p>
+                            </blockquote>
+                            <p class="text-black-50">한경대학교 4학년</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <!-- Preloader -->
+    <div id="overlayer"></div>
+    <div class="loader">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/tiny-slider.js"></script>
+    <script src="js/aos.js"></script>
+    <script src="js/navbar.js"></script>
+    <script src="js/counter.js"></script>
+    <script src="js/custom.js"></script>
+    <script src="chatbot.js"></script>
+    <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+    <script src="#script.js"></script>
+
+<script>
+/* 메인 히어로 이벤트 슬라이더 (챗봇과 동일 로직) */
+document.addEventListener('DOMContentLoaded', initHeroEventSlider);
+
+async function initHeroEventSlider(){
+  const $  = (s, r=document)=>r.querySelector(s);
+
+  const sliderEl = $('#heroEventSlider');
+  const titlesEl = $('#heroEventTitles');
+  const curEl    = $('#heroCur');
+  const totEl    = $('#heroTotal');
+  const prevBtn  = $('#heroPrev');
+  const nextBtn  = $('#heroNext');
+  if (!sliderEl) return;
+
+  // 1) 이벤트 목록
+  let events = [];
+  try {
+    const r = await fetch('/api/events?status=ongoing');
+    if (r.ok) {
+      const j = await r.json();
+      events = (j.events || []);
+    }
+  } catch(_) {}
+
+  // 진행중이 없으면 매핑에 있는 ID들로라도 구성
+  if (!events.length && typeof EVENT_IMAGE_MAP !== 'undefined') {
+    events = Object.keys(EVENT_IMAGE_MAP).map(id => ({ id: Number(id), title: `이벤트 ${id}` }));
+  }
+  if (!events.length) return;
+
+  // 2) 챗봇과 동일 규칙: ID 매핑 → 기본 이미지
+  const MAP = (typeof EVENT_IMAGE_MAP !== 'undefined') ? EVENT_IMAGE_MAP : {};
+  const DEF = (typeof DEFAULT_EVENT_IMAGE !== 'undefined') ? DEFAULT_EVENT_IMAGE : '';
+
+  function pickImage(ev){
+    // 필요 시 API 필드도 고려(있으면 우선 사용)
+    const direct = ev.imageUrl || ev.bannerUrl || ev.image || ev.thumbnailUrl || ev.thumbnail;
+    const byId   = MAP[ev.id];
+    return direct || byId || DEF;
+  }
+
+  // 3) DOM 생성 (배경이미지 방식)
+  sliderEl.innerHTML = events.map(ev => {
+    const img = pickImage(ev);
+    const href = `event_detail.html?id=${encodeURIComponent(ev.id)}`;
+    const title = (ev.title || '이벤트').replace(/"/g,'&quot;');
+    return `
+      <div class="hero-event-slide" data-id="${ev.id}">
+        <a class="hero-event-link" href="${href}" title="${title}"
+           style="background-image:url('${img}');"></a>
+        <span class="hero-event-badge">EVENT</span>
+      </div>`;
+  }).join('');
+
+  titlesEl.innerHTML = events
+    .map(ev => `<button type="button">${(ev.title || '이벤트').replace(/</g,'&lt;')}</button>`)
+    .join('');
+
+  // 4) tiny-slider
+  const slider = tns({
+    container: sliderEl,
+    items: 1,
+    nav: false,
+    controls: false,
+    autoplay: true,
+    autoplayTimeout: 4500,
+    autoplayHoverPause: true,
+    mouseDrag: true,
+    speed: 500,
+    loop: true,
+    autoplayButtonOutput: false    // start/stop 숨김
+  });
+
+  prevBtn.addEventListener('click', ()=> slider.goTo('prev'));
+  nextBtn.addEventListener('click', ()=> slider.goTo('next'));
+
+  // 5) 페이저/탭 상태
+const total = events.length;
+totEl.textContent = total;
+
+function update(info) {
+  const idx = info.displayIndex || 1;
+  curEl.textContent = idx;
+  Array.from(titlesEl.children).forEach((b, i) =>
+    b.classList.toggle('active', i === (idx - 1) % total)
+  );
+}
+update(slider.getInfo());
+slider.events?.on('indexChanged', update);
+
+// === 💡 [추가 코드] 제목 클릭 시 해당 슬라이드로 이동 ===
+Array.from(titlesEl.children).forEach((btn, index) => {
+  btn.addEventListener('click', () => {
+    slider.goTo(index); // 해당 인덱스로 이동
+    Array.from(titlesEl.children).forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+  
+}
+</script>
+
+
+
+<script>
+    /**
+     * 특정 게시판의 인기글 목록을 서버에서 가져와 화면에 표시하는 함수
+     */
+    async function loadPopularPosts(boardType, elementId) {
+        const listElement = document.getElementById(elementId);
+        if (!listElement) {
+            console.error(`Error: HTML에서 ID가 '${elementId}'인 요소를 찾을 수 없습니다.`);
+            return;
+        }
+
+        const apiUrl = (boardType === 'popular') ? '/api/popular-posts' : '/api/target-posts';
+
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
+                throw new Error(`${boardType} 게시판 로딩 실패: ${response.statusText}`);
+            }
+            const posts = await response.json();
+
+            listElement.innerHTML = '';
+
+            if (posts.length === 0) {
+                listElement.innerHTML = '<li>게시글이 없습니다.</li>';
+                return;
+            }
+
+            posts.forEach(post => {
+                const listItem = document.createElement('li');
+                const detailPage = (post.board_type === 'popular') ? '9-2_see.html' : '10-2_see.html';
+
+                // ▼▼▼▼▼ [수정] HTML 생성 방식 변경 ▼▼▼▼▼
+
+                // li 요소 자체를 flex 컨테이너로 만듭니다.
+                listItem.classList.add('d-flex', 'justify-content-between');
+
+                // 제목(a 태그)과 날짜(span 태그)를 분리하여 li의 자식으로 넣습니다.
+                listItem.innerHTML = `
+                    <a href="${detailPage}?id=${post.id}" class="board-title">${post.title}</a>
+                    <span class="board-date">${post.date}</span>
+                `;
+
+                // ▲▲▲▲▲ [수정] HTML 생성 방식 변경 ▲▲▲▲▲
+
+                listElement.appendChild(listItem);
+            });
+
+        } catch (error) {
+            console.error(`${elementId} 로딩 중 오류:`, error);
+            listElement.innerHTML = '<li>목록을 불러오는 데 실패했습니다.</li>';
+        }
+    }
+
+    // 페이지 로드가 완료되면 두 게시판의 데이터를 모두 불러옵니다.
+    document.addEventListener('DOMContentLoaded', () => {
+        loadPopularPosts('popular', 'free-popular-list');
+        loadPopularPosts('target', 'target-popular-list');
+    });
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // 히어로 존재 여부에 따라 모드 전환
+  const hero = document.querySelector('.hero, .page-inner.overlay');
+  document.body.classList.toggle('has-hero', !!hero);
+
+  // 스크롤 시, 히어로 아래로 내려가면 불투명 모드
+  function updateNavState(){
+    if(!hero){ document.body.classList.add('nav-solid'); return; }
+    const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 72;
+    const bottom = hero.getBoundingClientRect().bottom;
+    if(bottom <= navH) document.body.classList.add('nav-solid');
+    else document.body.classList.remove('nav-solid');
+  }
+  updateNavState();
+  window.addEventListener('scroll', updateNavState, {passive:true});
+  window.addEventListener('resize', updateNavState);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,71 @@
+[
+  {
+    "questID": 102,
+    "questName": "사라진 동생",
+    "script": "마을 소녀를 도와 사라진 동생 카야를 찾자.",
+    "requiredLevel": 0,
+    "steps": [
+      {
+        "stepDescription": "아리사에게 카야의 행방을 묻고, 마을 이장에게 윈드마을의 정보를 얻자.",
+        "startNpcId": 102,
+        "turnInNpcId": 101,
+        "missions": [
+          {
+            "type": "TalkTo",
+            "missionScript": "아리사에게 카야의 행방 묻기",
+            "targetId": 103,
+            "requiredAmount": 1,
+            "dialogueKey_Initial": "ARISA_KAYA_STEP0_FIRST",
+            "dialogueKey_Repeated": "ARISA_KAYA_STEP0_REPEATED"
+          }
+        ],
+        "rewards": null,
+        "dialogueKey_Start": "GIRL_KAYA_START",
+        "dialogueKey_InProgress": "GIRL_KAYA_INPROGRESS",
+        "dialogueKey_Complete": "CHIEF_KAYA_STEP0_COMPLETE"
+      },
+      {
+        "stepDescription": "마을 이장에게 얻은 정보를 아리사에게 전하고, 전투를 준비하자.",
+        "startNpcId": 101,
+        "turnInNpcId": 103,
+        "missions": [
+          {
+            "type": "TalkTo",
+            "missionScript": "아리사에게 정보 전달하기",
+            "targetId": 103,
+            "requiredAmount": 1,
+            "dialogueKey_Initial": "ARISA_KAYA_STEP1_FIRST",
+            "dialogueKey_Repeated": "ARISA_KAYA_STEP1_REPEATED"
+          }
+        ],
+        "rewards": null,
+        "dialogueKey_Start": "CHIEF_KAYA_STEP0_COMPLETE",
+        "dialogueKey_InProgress": "CHIEF_KAYA_STEP1_INPROGRESS",
+        "dialogueKey_Complete": "ARISA_KAYA_STEP1_COMPLETE"
+      },
+      {
+        "stepDescription": "도적왕을 처치하고 카야를 구출하자.",
+        "startNpcId": 0,
+        "turnInNpcId": 105,
+        "missions": [
+          {
+            "type": "Kill",
+            "missionScript": "도적왕 처치",
+            "targetId": 100,
+            "requiredAmount": 1,
+            "dialogueKey_Initial": null,
+            "dialogueKey_Repeated": null
+          }
+        ],
+        "rewards": {
+          "exp": 50,
+          "itemId": 601,
+          "gold": 1000
+        },
+        "dialogueKey_Start": null,
+        "dialogueKey_InProgress": "KAYA_KAYA_INPROGRESS",
+        "dialogueKey_Complete": "KAYA_KAYA_COMPLETE"
+      }
+    ]
+  }
+]
