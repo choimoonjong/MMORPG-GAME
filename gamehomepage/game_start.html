@@ -387,6 +387,72 @@
     window.WebSocket = RedirectWebSocket;
 })();
 </script>
+<script>
+(function () {
+    const OLD_SERVER = "http://localhost:3000";
+    const NEW_SERVER = "https://mmorpg-game-production-af1b.up.railway.app";
+
+    // =========================================
+    // XMLHttpRequest 주소 변경
+    // UnityWebRequest가 주로 이쪽을 사용함
+    // =========================================
+    const originalOpen = XMLHttpRequest.prototype.open;
+
+    XMLHttpRequest.prototype.open = function(method, url) {
+
+        if (typeof url === "string" && url.startsWith(OLD_SERVER)) {
+
+            const oldUrl = url;
+            url = url.replace(OLD_SERVER, NEW_SERVER);
+
+            console.log(
+                "[Unity API Redirect]",
+                oldUrl,
+                "->",
+                url
+            );
+        }
+
+        return originalOpen.apply(
+            this,
+            [method, url, ...Array.prototype.slice.call(arguments, 2)]
+        );
+    };
+
+
+    // =========================================
+    // fetch 주소 변경
+    // =========================================
+    const originalFetch = window.fetch;
+
+    window.fetch = function(resource, options) {
+
+        if (typeof resource === "string" &&
+            resource.startsWith(OLD_SERVER)) {
+
+            const oldUrl = resource;
+            resource = resource.replace(
+                OLD_SERVER,
+                NEW_SERVER
+            );
+
+            console.log(
+                "[Unity Fetch Redirect]",
+                oldUrl,
+                "->",
+                resource
+            );
+        }
+
+        return originalFetch.call(
+            this,
+            resource,
+            options
+        );
+    };
+
+})();
+</script>
   <script src="TemplateData/Build/localSetting.loader.js"></script>
   <script>
     window.addEventListener('DOMContentLoaded', () => {
