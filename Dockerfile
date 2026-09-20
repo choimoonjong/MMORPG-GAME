@@ -6,11 +6,18 @@ RUN apt-get update && \
 
 WORKDIR /src
 
-RUN git clone --depth 1 \
-    https://github.com/choimoonjong/MMORPG-GAME.git .
+ARG RAILWAY_GIT_COMMIT_SHA
 
-RUN git lfs pull
-RUN git lfs checkout
+RUN echo "Railway commit: $RAILWAY_GIT_COMMIT_SHA" && \
+    GIT_LFS_SKIP_SMUDGE=1 git clone \
+    https://github.com/choimoonjong/MMORPG-GAME.git . && \
+    git checkout "$RAILWAY_GIT_COMMIT_SHA" && \
+    git lfs pull && \
+    git lfs checkout
+
+RUN ls -lh gamehomepage/TemplateData/Build/
+
+RUN rm -rf .git
 
 RUN ls -lh gamehomepage/TemplateData/Build/
 
