@@ -345,7 +345,48 @@
 })();
 </script>
 
+<script>
+(function () {
+    const RAILWAY_HOST = "mmorpg-game-production-af1b.up.railway.app";
 
+    const OriginalWebSocket = window.WebSocket;
+
+    function RedirectWebSocket(url, protocols) {
+        let newUrl = String(url);
+
+        // Unity가 localhost:3000으로 연결하려 하면
+        // Railway의 보안 WebSocket 주소로 변경
+        if (newUrl.startsWith("ws://localhost:3000")) {
+            newUrl = newUrl.replace(
+                "ws://localhost:3000",
+                `wss://${RAILWAY_HOST}`
+            );
+
+            console.log(
+                "[WebSocket Redirect]",
+                url,
+                "->",
+                newUrl
+            );
+        }
+
+        if (protocols !== undefined) {
+            return new OriginalWebSocket(newUrl, protocols);
+        }
+
+        return new OriginalWebSocket(newUrl);
+    }
+
+    RedirectWebSocket.prototype = OriginalWebSocket.prototype;
+
+    RedirectWebSocket.CONNECTING = OriginalWebSocket.CONNECTING;
+    RedirectWebSocket.OPEN = OriginalWebSocket.OPEN;
+    RedirectWebSocket.CLOSING = OriginalWebSocket.CLOSING;
+    RedirectWebSocket.CLOSED = OriginalWebSocket.CLOSED;
+
+    window.WebSocket = RedirectWebSocket;
+})();
+</script>
   <script src="TemplateData/Build/localSetting.loader.js"></script>
   <script>
     window.addEventListener('DOMContentLoaded', () => {
@@ -365,6 +406,10 @@
     frameworkUrl: "/TemplateData/Build/localSetting.framework.js",
     codeUrl: "/TemplateData/Build/localSetting.wasm",
     streamingAssetsUrl: "/TemplateData/StreamingAssets",
+
+    companyName: "Portfolio",
+    productName: "Shadow Mercenary Online",
+    productVersion: "1.0"
 }).then(instance => {
           unityInstance = instance;
           console.log("Unity 인스턴스 생성 완료.");

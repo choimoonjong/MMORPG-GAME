@@ -76,6 +76,7 @@ const io = new Server(server, {
     origin: [
         "http://localhost:8080",
         "http://localhost:3000",
+        "https://mmorpg-game-production-af1b.up.railway.app",
         "https://xn--479aqgv87cx8e1va.site",
         "http://xn--479aqgv87cx8e1va.site"
     ],
